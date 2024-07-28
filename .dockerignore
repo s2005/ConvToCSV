@@ -29,6 +29,7 @@ coverage.xml
 env/
 venv/
 ENV/
+.python-virtualenv
 
 # IDEs
 .vscode
