@@ -6,23 +6,27 @@ import io
 def detect_header_type(header):
     return '\t' in header
 
-def convert_tab_to_csv(input_file, output_file, encoding='utf-8', header_lines=1):
-    debug_output = io.StringIO()
+def convert_tab_to_csv(input_file, output_file, encoding='utf-8', header_lines=1, debug=False):
+    debug_output = io.StringIO() if debug else None
+
+    def debug_print(*args, **kwargs):
+        if debug:
+            print(*args, file=debug_output, **kwargs)
 
     with open(input_file, 'r', encoding=encoding) as infile, \
          open(output_file, 'w', newline='', encoding=encoding) as outfile:
 
-        print(f"Debug: Input file contents:", file=debug_output)
-        print(infile.read(), file=debug_output)
+        debug_print(f"Debug: Input file contents:")
+        debug_print(infile.read())
         infile.seek(0)  # Reset file pointer to beginning
 
         # Read the header lines
         header = [next(infile).strip() for _ in range(header_lines)]
-        print(f"Debug: Header: {header}", file=debug_output)
+        debug_print(f"Debug: Header: {header}")
 
         # Determine the type of the header
         is_tab_header = any(detect_header_type(h) for h in header)
-        print(f"Debug: Is tab header: {is_tab_header}", file=debug_output)
+        debug_print(f"Debug: Is tab header: {is_tab_header}")
 
         # Process the header
         if is_tab_header:
@@ -33,7 +37,7 @@ def convert_tab_to_csv(input_file, output_file, encoding='utf-8', header_lines=1
             header_reader = csv.reader(header, dialect=header_dialect)
             header = [item for row in header_reader for item in row]  # Flatten the list
 
-        print(f"Debug: Processed header: {header}", file=debug_output)
+        debug_print(f"Debug: Processed header: {header}")
 
         # Write the header
         if header:
@@ -43,18 +47,19 @@ def convert_tab_to_csv(input_file, output_file, encoding='utf-8', header_lines=1
         for line in infile:
             if line.strip():  # Skip empty lines
                 row = line.strip().split('\t')
-                print(f"Debug: Writing row: {row}", file=debug_output)
+                debug_print(f"Debug: Writing row: {row}")
                 # Ensure fields with spaces or commas are quoted
                 quoted_row = [f'"{field}"' if ' ' in field or ',' in field else field for field in row]
                 outfile.write(','.join(quoted_row) + '\n')
 
     # Read the output file contents
-    with open(output_file, 'r', encoding=encoding) as outfile:
-        output_contents = outfile.read()
-        print(f"Debug: Output file contents:", file=debug_output)
-        print(output_contents, file=debug_output)
+    if debug:
+        with open(output_file, 'r', encoding=encoding) as outfile:
+            output_contents = outfile.read()
+            debug_print(f"Debug: Output file contents:")
+            debug_print(output_contents)
 
-    return debug_output.getvalue()
+    return debug_output.getvalue() if debug else None
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Convert TAB-delimited file to CSV')
@@ -62,6 +67,7 @@ def parse_arguments():
     parser.add_argument('output_file', help='Output CSV file')
     parser.add_argument('--encoding', default='utf-8', help='File encoding (default: utf-8)')
     parser.add_argument('--header-lines', type=int, default=1, help='Number of header lines (default: 1)')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
 
     return parser.parse_args()
 
@@ -69,8 +75,9 @@ def main():
     args = parse_arguments()
 
     try:
-        debug_info = convert_tab_to_csv(args.input_file, args.output_file, args.encoding, args.header_lines)
-        print(debug_info)  # Print debug information
+        debug_info = convert_tab_to_csv(args.input_file, args.output_file, args.encoding, args.header_lines, args.debug)
+        if args.debug and debug_info:
+            print(debug_info)  # Print debug information
         print(f"Conversion completed: {args.input_file} -> {args.output_file}")
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

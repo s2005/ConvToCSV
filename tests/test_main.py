@@ -71,6 +71,15 @@ class TestTabToCsvConverter(unittest.TestCase):
         self.assertEqual(args.encoding, 'latin-1')
         self.assertEqual(args.header_lines, 2)
 
+        # Test with debug flag
+        sys.argv = ['script_name', 'input.txt', 'output.csv', '--debug']
+        args = parse_arguments()
+        self.assertEqual(args.input_file, 'input.txt')
+        self.assertEqual(args.output_file, 'output.csv')
+        self.assertEqual(args.encoding, 'utf-8')
+        self.assertEqual(args.header_lines, 1)
+        self.assertTrue(args.debug)
+
     def _run_test(self, input_content, expected_output, header_lines=1):
         with tempfile.NamedTemporaryFile(mode='w+', delete=False, encoding='utf-8') as input_file, \
              tempfile.NamedTemporaryFile(mode='w+', delete=False, encoding='utf-8') as output_file:
@@ -94,6 +103,36 @@ class TestTabToCsvConverter(unittest.TestCase):
             self.assertEqual(result, expected_output)
 
         # Clean up temporary files
+        os.unlink(input_file.name)
+        os.unlink(output_file.name)
+
+    def test_debug_output(self):
+        input_content = "Header1\tHeader2\nValue1\tValue2"
+        expected_output = "Header1,Header2\nValue1,Value2\n"
+
+        with tempfile.NamedTemporaryFile(mode='w+', delete=False, encoding='utf-8') as input_file, \
+            tempfile.NamedTemporaryFile(mode='w+', delete=False, encoding='utf-8') as output_file:
+
+            input_file.write(input_content)
+            input_file.close()
+
+            debug_info = convert_tab_to_csv(input_file.name, output_file.name, debug=True)
+
+            self.assertIsNotNone(debug_info)
+            self.assertIn("Debug: Input file contents:", debug_info)
+            self.assertIn("Debug: Header:", debug_info)
+            self.assertIn("Debug: Is tab header:", debug_info)
+            self.assertIn("Debug: Processed header:", debug_info)
+            self.assertIn("Debug: Writing row:", debug_info)
+            self.assertIn("Debug: Output file contents:", debug_info)
+
+            output_file.close()
+
+            with open(output_file.name, 'r', encoding='utf-8') as f:
+                result = f.read()
+
+            self.assertEqual(result, expected_output)
+
         os.unlink(input_file.name)
         os.unlink(output_file.name)
 
