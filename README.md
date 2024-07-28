@@ -22,8 +22,7 @@ Whether you're dealing with exported database tables, legacy data formats, or si
 ConvToCSV/
 │
 ├── .devcontainer/
-│   ├── devcontainer.json
-│   └── Dockerfile
+│   └── devcontainer.json
 ├── src/
 │   ├── __init__.py
 │   └── main.py
@@ -33,23 +32,24 @@ ConvToCSV/
 ├── .gitignore
 ├── .dockerignore
 ├── requirements.txt
+├── setup.py
 └── README.md
 ```
 
 - `.devcontainer/`: Configuration for development container
-- `.devcontainer/Dockerfile`: Docker configuration
 - `src/`: Contains the main source code of the project
 - `tests/`: Contains unit tests
 - `.gitignore`: Specifies intentionally untracked files to ignore
 - `.dockerignore`: Specifies files and directories that should be excluded when building a Docker image
 - `requirements.txt`: List of Python dependencies
+- `setup.py`: Package setup file
 - `README.md`: This file
 
 ## Development Container
 
 This project uses a development container to ensure a consistent development environment across different machines. The devcontainer includes:
 
-- Python 3.9
+- Python 3.11
 - zsh shell with Oh My Zsh
 - pytest for running unit tests
 - Common Python development tools and libraries
@@ -61,6 +61,12 @@ To use the devcontainer:
 3. When prompted, click "Reopen in Container", or run the "Remote-Containers: Reopen in Container" command from the Command Palette.
 
 The devcontainer will automatically set up the development environment with all necessary dependencies.
+
+## Requirements
+
+- Python 3.11 or higher
+
+This package has been tested only with Python 3.11. Compatibility with other versions is not guaranteed.
 
 ## Installation
 
@@ -87,9 +93,25 @@ If you're not using the devcontainer, you can set up the project environment man
    pip install -r requirements.txt
    ```
 
+4. Install the package in editable mode (optional):
+
+   ```shell
+   pip install -e .
+   ```
+
+   **Note: After installing with `pip install -e .`, the `convtocsv` command becomes available system-wide, allowing you to run it from any directory.**
+
+5. Install the package in editable mode with the dev dependencies (optional):
+
+   ```shell
+   pip install -e .[dev]
+   ```
+
 ## Usage
 
 Here's a basic example of how to use ConvToCSV:
+
+### As a Python module
 
 ```python
 from src.main import convert_tab_to_csv
@@ -101,7 +123,7 @@ convert_tab_to_csv('input.txt', 'output.csv', encoding='utf-8', header_lines=2, 
 convert_tab_to_csv('input.txt', 'output.csv', encoding='utf-8', header_lines=2, delimiter='|')
 ```
 
-For command-line usage:
+### For command-line usage
 
 ```shell
 # For tab-delimited input
@@ -117,7 +139,13 @@ To enable debug mode and see detailed information about the conversion process:
 python src/main.py input.txt output.csv --encoding utf-8 --header-lines 2 --delimiter '\t' --debug
 ```
 
-### Using Special Characters as Delimiters
+### As a command-line tool when installed in editable mode
+
+```shell
+conv2csv input.txt output.csv
+```
+
+### Note on Delimiters
 
 When using special characters like the pipe (|) as delimiters in command-line arguments, it's important to properly escape or quote them to prevent the shell from interpreting them as special operators. Here are the recommended ways to use the pipe character as a delimiter:
 
@@ -160,6 +188,12 @@ To run the tests for this project:
 python -m pytest tests/
 ```
 
+To run the tests if you have installed the package in editable mode with the dev dependencies:
+
+```shell
+pytest tests/
+```
+
 ## Contributing
 
 Contributions to ConvToCSV are welcome! Here's how you can contribute:
@@ -170,7 +204,7 @@ Contributions to ConvToCSV are welcome! Here's how you can contribute:
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-Please note that when you open a pull request, GitHub Actions will automatically run our test suite. This automated testing occurs only on pull requests, not on every commit. Ensure that all tests pass before submitting your pull request. If you've added new functionality, please include appropriate tests.
+Please note that when you open a pull request, **GitHub Actions will automatically run our test suite. This automated testing occurs only on pull requests, not on every commit.** Ensure that all tests pass before submitting your pull request. If you've added new functionality, please include appropriate tests.
 
 To check if your changes pass the tests locally before submitting a pull request, run:
 
