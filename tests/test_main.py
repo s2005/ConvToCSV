@@ -2,7 +2,6 @@ import unittest
 import tempfile
 import os
 import sys
-from io import StringIO
 from src.main import convert_tab_to_csv, parse_arguments
 
 class TestTabToCsvConverter(unittest.TestCase):
@@ -80,8 +79,12 @@ class TestTabToCsvConverter(unittest.TestCase):
             input_file.write(input_content)
             input_file.close()
 
-            # Convert
-            convert_tab_to_csv(input_file.name, output_file.name, header_lines=header_lines)
+            # Convert and capture debug output
+            debug_output = convert_tab_to_csv(input_file.name, output_file.name, header_lines=header_lines)
+
+            print(f"Debug output for {self._testMethodName}:")
+            print(debug_output)
+
             output_file.close()
 
             # Read and check output
