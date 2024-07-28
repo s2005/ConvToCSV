@@ -20,27 +20,28 @@ def convert_tab_to_csv(input_file, output_file, encoding='utf-8', header_lines=1
         debug_print(infile.read())
         infile.seek(0)  # Reset file pointer to beginning
 
-        # Read the header lines
-        header = [next(infile).strip() for _ in range(header_lines)]
-        debug_print(f"Debug: Header: {header}")
+        # Read the header lines if any
+        header = []
+        if header_lines > 0:
+            header = [next(infile).strip() for _ in range(header_lines)]
+            debug_print(f"Debug: Header: {header}")
 
-        # Determine the type of the header
-        is_tab_header = any(detect_header_type(h) for h in header)
-        debug_print(f"Debug: Is tab header: {is_tab_header}")
+            # Determine the type of the header
+            is_tab_header = any(detect_header_type(h) for h in header)
+            debug_print(f"Debug: Is tab header: {is_tab_header}")
 
-        # Process the header
-        if is_tab_header:
-            header = [h.split('\t') for h in header]
-            header = [item for sublist in header for item in sublist]  # Flatten the list
-        else:
-            header_dialect = csv.Sniffer().sniff(''.join(header))
-            header_reader = csv.reader(header, dialect=header_dialect)
-            header = [item for row in header_reader for item in row]  # Flatten the list
+            # Process the header
+            if is_tab_header:
+                header = [h.split('\t') for h in header]
+                header = [item for sublist in header for item in sublist]  # Flatten the list
+            else:
+                header_dialect = csv.Sniffer().sniff(''.join(header))
+                header_reader = csv.reader(header, dialect=header_dialect)
+                header = [item for row in header_reader for item in row]  # Flatten the list
 
-        debug_print(f"Debug: Processed header: {header}")
+            debug_print(f"Debug: Processed header: {header}")
 
-        # Write the header
-        if header:
+            # Write the header
             outfile.write(','.join(header) + '\n')
 
         # Write the rest of the file
