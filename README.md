@@ -2,7 +2,7 @@
 
 ## Description
 
-ConvToCSV is a Python project designed to streamline the process of converting tab-delimited files to CSV format. It provides a simple and robust solution for handling various input scenarios, including different header formats and multi-line headers. This tool is particularly useful for data analysts, researchers, and developers who frequently work with data copied from web page and need a reliable way to standardize their data into CSV format.
+ConvToCSV is a Python project designed to streamline the process of converting tab-delimited files to CSV format. It provides a simple and robust solution for handling various input scenarios, including different header formats and multi-line headers. This tool is particularly useful for data analysts, researchers, and developers who frequently work with data copied from web pages and need a reliable way to standardize their data into CSV format.
 
 Key features of ConvToCSV include:
 
@@ -11,6 +11,7 @@ Key features of ConvToCSV include:
 - Handling of empty lines and fields with spaces
 - Customizable encoding options
 - Command-line interface for easy integration into data processing pipelines
+- Debug mode for detailed conversion process information
 
 Whether you're dealing with exported database tables, legacy data formats, or simply need to convert between delimited file types, ConvToCSV offers a straightforward and efficient solution.
 
@@ -101,6 +102,20 @@ For command-line usage:
 ```shell
 python src/main.py input.txt output.csv --encoding utf-8 --header-lines 2
 ```
+
+To enable debug mode and see detailed information about the conversion process:
+
+```shell
+python src/main.py input.txt output.csv --encoding utf-8 --header-lines 2 --debug
+```
+
+Command-line arguments:
+
+- `input_file`: Path to the input tab-delimited file
+- `output_file`: Path to the output CSV file
+- `--encoding`: File encoding (default: utf-8)
+- `--header-lines`: Number of header lines (default: 1)
+- `--debug`: Enable debug output (optional)
 
 ## Running Tests
 
