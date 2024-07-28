@@ -75,7 +75,7 @@ If you're not using the devcontainer, you can set up the project environment man
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/yourusername/ConvToCSV.git
+   git clone https://github.com/s2005/ConvToCSV.git
    cd ConvToCSV
    ```
 
