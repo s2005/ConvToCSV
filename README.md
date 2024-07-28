@@ -142,7 +142,7 @@ python src/main.py input.txt output.csv --encoding utf-8 --header-lines 2 --deli
 ### As a command-line tool when installed in editable mode
 
 ```shell
-conv2csv input.txt output.csv
+convtocsv input.txt output.csv
 ```
 
 ### Note on Delimiters
